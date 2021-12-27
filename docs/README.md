@@ -21,7 +21,28 @@ The CanvasEventManager provides an interface to interact with a DOM canvas and h
 const win = new InventoryWindows.PlayerWin(canvasManager, { getImage })
 ```
 
-All of the InventoryWindows have a second `dataProvider` argument. This should have a `getImage` function that should return an  [`Image`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/Image) instance, and take a "path" parameter. This function is called whenever an icon (such as a minecraft item or background image) needs to be rendered. It's then cached inside the renderer for that path.
+All of the InventoryWindows have a second `dataProvider` argument. This should have a `getImage` function that should return either an [`Image`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/Image) or a MetaImage instance (details below), and take a Resource object as its parameter. This function is called whenever an icon (such as a minecraft item or background image) needs to be rendered. It's then cached inside the renderer for that path.
+
+The resource object is formatted in a way that is slightly wacky, but it's the easiest way to implement it without major refactoring:
+```
+{
+    type: 'gui | item', // assume gui if not specified
+    item?: ItemStack, // only for type: 'item'
+    path: string, // only for type: 'gui'
+}
+```
+
+When the type of the resource is item, we instead expect a MetaImage. The MetaImage contains an Image object and information about how to clip it (used for atlases).
+```
+{
+    image: Image,
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    scale: number
+}
+```
 
 ## Usage
 
